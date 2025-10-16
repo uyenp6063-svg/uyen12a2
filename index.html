@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gợi ý Chế độ Ăn & Bài tập - Calo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap 5 CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #d1f2eb 0%, #b9e3f4 100%);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      .container {
+        max-width: 650px;
+        background: #f6fff8cc;
+        margin-top: 40px;
+        border-radius: 18px;
+        box-shadow: 0 6px 32px rgba(36, 171, 177, 0.1);
+        padding: 32px 32px 20px 32px;
+        color: #234b38;
+      }
+      h2,
+      h5 {
+        color: #219150;
+        font-weight: 600;
+      }
+      .result-box {
+        background: #e6fbf0;
+        border: 1px solid #a6e3c8;
+        border-radius: 10px;
+        padding: 18px 24px;
+        margin-top: 22px;
+        color: #234b38;
+      }
+      .table-custom {
+        background: #f7fefc;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(52, 199, 89, 0.04);
+        margin-bottom: 14px;
+        color: #1d4732;
+      }
+      .green {
+        color: #23b35d;
+      }
+      .blue {
+        color: #1c89b6;
+      }
+      .btn-custom {
+        background: linear-gradient(90deg, #23b35d 60%, #1c89b6 100%);
+        color: #fff;
+        border: none;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+      .btn-custom:hover {
+        background: linear-gradient(90deg, #1c89b6 60%, #23b35d 100%);
+        color: #fff;
+      }
+      .note {
+        font-size: 0.97em;
+        color: #328a6a;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="mb-4 text-center">Tư vấn Calo, Chế độ Ăn & Bài Tập</h2>
+      <!-- Thông tin cá nhân -->
+      <form id="infoForm" class="mb-4">
+        <h5>Nhập thông tin cá nhân</h5>
+        <div class="row">
+          <div class="col-6 mb-2">
+            <label for="age" class="form-label">Tuổi</label>
+            <input
+              type="number"
+              id="age"
+              class="form-control"
+              min="10"
+              max="120"
+              required
+            />
+          </div>
+          <div class="col-6 mb-2">
+            <label for="gender" class="form-label">Giới tính</label>
+            <select id="gender" class="form-select" required>
+              <option value="male">Nam</option>
+              <option value="female">Nữ</option>
+            </select>
+          </div>
+          <div class="col-6 mb-2">
+            <label for="height" class="form-label">Chiều cao (cm)</label>
+            <input
+              type="number"
+              id="height"
+              class="form-control"
+              min="100"
+              max="250"
+              required
+            />
+          </div>
+          <div class="col-6 mb-2">
+            <label for="weight" class="form-label">Cân nặng (kg)</label>
+            <input
+              type="number"
+              id="weight"
+              class="form-control"
+              min="30"
+              max="200"
+              required
+            />
+          </div>
+          <div class="col-12 mb-2">
+            <label for="activity" class="form-label"
+              >Mức độ vận động (trung bình ngày)</label
+            >
+            <select id="activity" class="form-select" required>
+              <option value="1.2">Ít vận động (ngồi nhiều)</option>
+              <option value="1.375">Vận động nhẹ (1-3 buổi/tuần)</option>
+              <option value="1.55">Vận động vừa (3-5 buổi/tuần)</option>
+              <option value="1.725">Vận động nặng (6-7 buổi/tuần)</option>
+              <option value="1.9">
+                Rất nặng (vận động viên, lao động nặng)
+              </option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <!-- Kết quả và gợi ý -->
+      <div class="result-box" id="resultBox" style="display: none">
+        <h5>Kết quả & Gợi ý cá nhân hóa</h5>
+        <div id="resultText"></div>
+        <hr />
+        <div id="exerciseSuggest"></div>
+        <div id="dietSuggest"></div>
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-custom px-5" onclick="showResult()">
+          Xem tư vấn calo & gợi ý
+        </button>
+      </div>
+      <div class="note">
+        * Dữ liệu chỉ mang tính tham khảo, khi cần thay đổi lớn về cân nặng nên
+        tham vấn chuyên gia dinh dưỡng.
+      </div>
+    </div>
+    <script>
+      // Danh sách bài tập mẫu (lượng calo tiêu hao với người 60kg/30 phút)
+      const exercises = [
+        { name: "Đi bộ nhanh", cal: 150 },
+        { name: "Chạy bộ", cal: 300 },
+        { name: "Đạp xe", cal: 250 },
+        { name: "Bơi lội", cal: 250 },
+        { name: "Tập gym (tạ)", cal: 180 },
+        { name: "Yoga", cal: 120 },
+        { name: "Nhảy dây", cal: 350 },
+        { name: "Leo cầu thang", cal: 220 },
+      ];
+      // Danh sách chế độ ăn mẫu (bữa khoảng 500-700 calo)
+      const diets = [
+        { name: "Ăn Eat Clean (gà + khoai lang + rau)", cal: 550 },
+        { name: "Bún thịt nướng + nước cam", cal: 650 },
+        { name: "Cơm thịt bò xào + rau + canh", cal: 600 },
+        { name: "Phở bò + sữa tươi không đường", cal: 550 },
+        { name: "Salad cá ngừ + bánh mì nguyên cám", cal: 500 },
+        { name: "Cháo ức gà + trứng luộc", cal: 500 },
+      ];
+
+      function showResult() {
+        // Lấy thông tin cá nhân
+        const age = Number(document.getElementById("age").value);
+        const gender = document.getElementById("gender").value;
+        const height = Number(document.getElementById("height").value);
+        const weight = Number(document.getElementById("weight").value);
+        const activity = Number(document.getElementById("activity").value);
+
+        if (!age || !gender || !height || !weight || !activity) {
+          alert("Vui lòng nhập đầy đủ thông tin cá nhân!");
+          return;
+        }
+        // Tính BMR
+        let BMR = 0;
+        if (gender === "male") {
+          BMR = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
+        } else {
+          BMR = 447.593 + 9.247 * weight + 3.098 * height - 4.33 * age;
+        }
+        // Tính TDEE
+        const TDEE = BMR * activity;
+        const maintain = Math.round(TDEE);
+        const lose = Math.round(TDEE * 0.8);
+        const gain = Math.round(TDEE * 1.2);
+
+        // Phần kết quả
+        let html = `
+        <ul>
+          <li><b>BMR</b> (Tỷ lệ trao đổi chất cơ bản): <span class="blue">${Math.round(
+            BMR
+          )} calo/ngày</span></li>
+          <li><b>TDEE</b> (Calo cần mỗi ngày): <span class="green">${maintain} calo/ngày</span></li>
+        </ul>
+        <ul>
+          <li>Để <b class="green">giữ cân</b>: ~<b>${maintain} calo/ngày</b></li>
+          <li>Để <b class="blue">giảm cân</b>: ~<b>${lose} calo/ngày</b></li>
+          <li>Để <b class="green">tăng cân</b>: ~<b>${gain} calo/ngày</b></li>
+        </ul>
+      `;
+
+        // Gợi ý bài tập
+        let exSuggest = `<h6 class="mt-2 blue">Gợi ý bài tập (30 phút/ngày)</h6>
+      <table class="table table-sm table-custom">
+        <thead><tr><th>Bài tập</th><th>Calo tiêu hao*</th></tr></thead>
+        <tbody>`;
+        exercises.forEach((ex) => {
+          // Điều chỉnh theo cân nặng
+          let cal = Math.round((ex.cal * weight) / 60);
+          exSuggest += `<tr><td>${ex.name}</td><td>${cal} calo</td></tr>`;
+        });
+        exSuggest += `</tbody></table><div style="font-size:0.96em;color:#328a6a;">* Ước tính cho 30 phút, cân nặng ${weight}kg</div>`;
+
+        // Gợi ý chế độ ăn
+        let dietSuggest = `<h6 class="mt-2 green">Gợi ý bữa ăn (~500-700 calo/bữa)</h6>
+      <table class="table table-sm table-custom">
+        <thead><tr><th>Bữa ăn</th><th>Calo ước tính</th></tr></thead>
+        <tbody>`;
+        diets.forEach((d) => {
+          dietSuggest += `<tr><td>${d.name}</td><td>${d.cal} calo</td></tr>`;
+        });
+        dietSuggest += `</tbody></table>`;
+
+        document.getElementById("resultText").innerHTML = html;
+        document.getElementById("exerciseSuggest").innerHTML = exSuggest;
+        document.getElementById("dietSuggest").innerHTML = dietSuggest;
+        document.getElementById("resultBox").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
